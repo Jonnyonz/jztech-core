@@ -24,7 +24,7 @@ hash en el `requirements.txt` de cada app satelite (nunca por URL de git sin
 hash):
 
 ```
-jztech-core @ https://github.com/Jonnyonz/jztech-core/releases/download/v0.1.0/jztech_core-0.1.0-py3-none-any.whl --hash=sha256:772473f801fa992007b57faead2c3a457d03be6334d883b46eda994adf83f876
+jztech-core @ https://github.com/Jonnyonz/jztech-core/releases/download/v0.1.1/jztech_core-0.1.1-py3-none-any.whl --hash=sha256:d98c9818da2d19cdd648006156e971ae7d0ea5b95cb69d2f97877aa8e9fa89bc
 ```
 
 (el hash de cada release nuevo está en el `SHA256SUMS.txt` adjunto a ese release)

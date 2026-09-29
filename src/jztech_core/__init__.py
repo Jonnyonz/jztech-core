@@ -21,7 +21,7 @@ from jztech_core.migrations import apply_migrations
 from jztech_core.logging_setup import configure_logging, install_generic_error_handler
 from jztech_core.setup_flow import verify_setup_token
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 __all__ = [
     "hash_password",

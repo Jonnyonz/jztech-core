@@ -32,16 +32,20 @@ def configure_logging(level: int = logging.INFO) -> None:
     root.setLevel(level)
 
 
-def install_generic_error_handler(app: Any, logger_name: str = "app") -> None:
+def install_generic_error_handler(app: Any, logger_name: str = "app", field: str = "msg") -> None:
     """Registra un exception handler que loguea el detalle completo (con
     traceback) en el servidor y devuelve siempre un mensaje generico al
-    cliente. Nunca expone str(exc) en la respuesta HTTP."""
+    cliente. Nunca expone str(exc) en la respuesta HTTP.
+
+    field: nombre del campo del JSON de respuesta, para respetar el formato
+    que ya lee el frontend de cada app ("msg" o "detail", como FastAPI)."""
     from starlette.requests import Request
     from starlette.responses import JSONResponse
 
     logger = logging.getLogger(logger_name)
 
-    @app.exception_handler(Exception)
     async def _generic_error_handler(request: Request, exc: Exception) -> JSONResponse:
         logger.exception("Error no manejado en %s %s", request.method, request.url.path)
-        return JSONResponse(status_code=500, content={"msg": "Error interno del servidor."})
+        return JSONResponse(status_code=500, content={field: "Error interno del servidor."})
+
+    app.add_exception_handler(Exception, _generic_error_handler)

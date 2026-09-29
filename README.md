@@ -40,7 +40,7 @@ Se distribuye como *wheel* adjunto a cada release de GitHub, referenciado **con 
 `requirements.txt` de la app (nunca por URL de git sin hash):
 
 ```
-jztech-core @ https://github.com/Jonnyonz/jztech-core/releases/download/v0.1.4/jztech_core-0.1.4-py3-none-any.whl --hash=sha256:cdf9c6ec9c7ea3bc1ef63a14684e62b54d58c3867fa68a817ceef1bca2e7e3d4
+jztech-core @ https://github.com/Jonnyonz/jztech-core/releases/download/v0.1.5/jztech_core-0.1.5-py3-none-any.whl --hash=sha256:86fe7da6ce7ffaf77c6111592faead17f9a778012161594cab9651c09961f715
 ```
 
 El hash de cada versión está en el `SHA256SUMS.txt` adjunto a su release.
@@ -168,7 +168,8 @@ falla, el error se propaga y la app no arranca (nunca se silencia).
 from jztech_core.logging_setup import configure_logging, install_generic_error_handler
 
 configure_logging()                               # JSON a stdout
-install_generic_error_handler(app, "mi_app")      # 500 con mensaje genérico; el detalle, al log
+install_generic_error_handler(app, "mi_app")      # 500 con {"msg": "Error interno..."}; el detalle, al log
+# field="detail" si el frontend lee el formato de FastAPI: {"detail": "..."}
 ```
 
 ### Configuración inicial

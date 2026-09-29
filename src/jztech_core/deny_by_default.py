@@ -10,11 +10,23 @@ from __future__ import annotations
 from typing import Any, Callable, Iterable
 
 
+def _depends_on(dependant: Any, target: Callable[..., Any]) -> bool:
+    """True si target aparece en el arbol de dependencias, a cualquier nivel.
+    Hace falta recorrerlo entero: un chequeo de rol tipo require_role(...)
+    devuelve una funcion distinta por ruta que a su vez depende de la de sesion."""
+    for dep in getattr(dependant, "dependencies", []):
+        if getattr(dep, "call", None) is target or _depends_on(dep, target):
+            return True
+    return False
+
+
 def assert_all_routes_protected(app: Any, public_paths: Iterable[str], auth_dependency: Callable[..., Any]) -> None:
     """Falla (AssertionError) si alguna ruta de app.routes no esta en
-    public_paths ni depende de auth_dependency (dependencia de FastAPI usada
-    para exigir sesion). Ignora rutas sin atributo `path` (montajes estaticos,
-    etc.) y las que no tengan `.dependant` (no son endpoints de FastAPI)."""
+    public_paths ni depende, directa o indirectamente, de auth_dependency
+    (dependencia de FastAPI usada para exigir sesion). Las dependencias de
+    router y de app cuentan: FastAPI las incluye en el arbol de cada ruta.
+    Ignora rutas sin atributo `path` (montajes estaticos, etc.) y las que no
+    tengan `.dependant` (no son endpoints de FastAPI)."""
     public = set(public_paths)
     unprotected: list[str] = []
     for route in app.routes:
@@ -24,9 +36,7 @@ def assert_all_routes_protected(app: Any, public_paths: Iterable[str], auth_depe
         dependant = getattr(route, "dependant", None)
         if dependant is None:
             continue
-        deps = getattr(dependant, "dependencies", [])
-        call_names = {d.call for d in deps if getattr(d, "call", None) is not None}
-        if auth_dependency not in call_names:
+        if not _depends_on(dependant, auth_dependency):
             unprotected.append(path)
     if unprotected:
         raise AssertionError(

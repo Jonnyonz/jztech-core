@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jztech-core"
+version = "0.1.0"
+description = "Libreria de seguridad e infraestructura compartida para las apps de JZTech: hash de claves (Argon2id), sesiones opacas, CSRF, cabeceras de seguridad, IP real, deny-by-default y migraciones SQL versionadas."
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.11"
+authors = [{ name = "Jonnyonz" }]
+dependencies = [
+    "argon2-cffi>=23,<24",
+    "starlette>=0.37",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "httpx>=0.27", "bcrypt>=4"]
+
+[project.urls]
+Homepage = "https://github.com/Jonnyonz/jztech-core"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/jztech_core"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

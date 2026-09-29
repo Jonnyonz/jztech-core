@@ -28,3 +28,21 @@ def test_csp_can_be_disabled():
     client = TestClient(_make_app(csp=None))
     resp = client.get("/")
     assert "content-security-policy" not in resp.headers
+
+
+def test_permissions_policy_default_denies_geolocation():
+    client = TestClient(_make_app())
+    resp = client.get("/")
+    assert resp.headers["permissions-policy"] == "geolocation=(), microphone=(), camera=()"
+
+
+def test_permissions_policy_can_allow_geolocation():
+    client = TestClient(_make_app(permissions_policy="geolocation=(self), camera=()"))
+    resp = client.get("/")
+    assert resp.headers["permissions-policy"] == "geolocation=(self), camera=()"
+
+
+def test_permissions_policy_can_be_disabled():
+    client = TestClient(_make_app(permissions_policy=None))
+    resp = client.get("/")
+    assert "permissions-policy" not in resp.headers

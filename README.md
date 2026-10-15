@@ -190,10 +190,12 @@ Con `SETUP_TOKEN` vacío siempre devuelve `False` (la configuración inicial que
 | | Probado |
 |---|---|
 | Python | 3.11, 3.12, 3.13 (CI) |
-| Starlette | 0.27.0 (con FastAPI 0.104.1) y 1.7.0 (con FastAPI 0.141.1) |
+| Starlette | 0.27.0 (con FastAPI 0.104.1) y 1.8.0 (con FastAPI 0.143.1) |
+| argon2-cffi | 23.1 a 25.1 |
+| bcrypt (hashes viejos) | 4.x y 5.x |
 
-El piso de Starlette es 0.27 porque lo usa JZTravell. Cualquier API de Starlette nueva que se
-use en la librería tiene que probarse contra esa versión.
+Las cuatro apps usan FastAPI 0.143.1 / Starlette 1.8.0. El piso de Starlette sigue en 0.27: cualquier
+API de Starlette nueva que se use en la librería tiene que probarse contra esa versión o subir el piso.
 
 ---
 

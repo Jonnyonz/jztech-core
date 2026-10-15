@@ -20,5 +20,15 @@ def test_verify_legacy_bcrypt():
     assert not verify_legacy_password("otra-clave", stored)
 
 
+def test_verify_legacy_bcrypt_long_password():
+    # Hash creado por un bcrypt viejo (trunca a 72 bytes): con bcrypt>=5 no tiene que tirar ValueError.
+    import bcrypt
+
+    larga = "x" * 80
+    stored = bcrypt.hashpw(larga.encode()[:72], bcrypt.gensalt()).decode()
+    assert verify_legacy_password(larga, stored)
+    assert not verify_legacy_password("y" * 80, stored)
+
+
 def test_verify_legacy_unknown_format_returns_false():
     assert verify_legacy_password("cualquier-cosa", "esto-no-es-un-hash-valido") is False

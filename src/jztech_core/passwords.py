@@ -50,5 +50,7 @@ def verify_legacy_password(password: str, stored_hash: str) -> bool:
     if stored_hash.startswith(("$2a$", "$2b$", "$2y$")):
         import bcrypt
 
-        return bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8"))
+        # bcrypt solo usa los primeros 72 bytes: las versiones viejas los truncaban solas al crear el
+        # hash, y bcrypt>=5 tira ValueError con una clave mas larga. Se trunca igual para verificar.
+        return bcrypt.checkpw(password.encode("utf-8")[:72], stored_hash.encode("utf-8"))
     return False

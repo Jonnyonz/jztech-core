@@ -148,8 +148,10 @@ def test_todas_las_rutas_exigen_sesion():
 ```
 
 Cuenta como protegida toda ruta que dependa de `auth_dependency` a cualquier nivel (también a
-través de un chequeo de rol que dependa de ella, o de dependencias de router). La lista de
-públicas es por path.
+través de un chequeo de rol que dependa de ella, o de dependencias de router o de
+`include_router()`). La lista de públicas es por path (el efectivo, con prefijos). Desde 0.1.7
+entra en los routers incluidos: FastAPI 0.141+ ya no los copia en `app.routes` y hasta entonces
+el chequeo solo veía las rutas definidas directamente sobre la app.
 
 ### Migraciones
 

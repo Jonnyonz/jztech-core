@@ -20,21 +20,33 @@ def _depends_on(dependant: Any, target: Callable[..., Any]) -> bool:
     return False
 
 
+def _effective_routes(routes: Iterable[Any]) -> Iterable[tuple[str, Any]]:
+    """(path, dependant) de cada ruta, entrando en los routers incluidos.
+    FastAPI >= 0.141 ya no copia en app.routes las rutas de include_router(): las
+    envuelve en un _IncludedRouter sin path, y arma a pedido (effective_candidates)
+    el path y el dependant efectivos, con el prefijo y las dependencias del include.
+    Sin recorrerlos, el chequeo solo veia las rutas definidas sobre la app."""
+    for route in routes:
+        candidatos = getattr(route, "effective_candidates", None)
+        if callable(candidatos):
+            yield from _effective_routes(candidatos())
+            continue
+        path = getattr(route, "path", None)
+        if path is not None:
+            yield path, getattr(route, "dependant", None)
+
+
 def assert_all_routes_protected(app: Any, public_paths: Iterable[str], auth_dependency: Callable[..., Any]) -> None:
-    """Falla (AssertionError) si alguna ruta de app.routes no esta en
-    public_paths ni depende, directa o indirectamente, de auth_dependency
-    (dependencia de FastAPI usada para exigir sesion). Las dependencias de
-    router y de app cuentan: FastAPI las incluye en el arbol de cada ruta.
+    """Falla (AssertionError) si alguna ruta de la app (incluidas las de los
+    routers incluidos) no esta en public_paths ni depende, directa o
+    indirectamente, de auth_dependency (dependencia de FastAPI usada para exigir
+    sesion). Las dependencias de router, de include_router() y de app cuentan.
     Ignora rutas sin atributo `path` (montajes estaticos, etc.) y las que no
     tengan `.dependant` (no son endpoints de FastAPI)."""
     public = set(public_paths)
     unprotected: list[str] = []
-    for route in app.routes:
-        path = getattr(route, "path", None)
-        if path is None or path in public:
-            continue
-        dependant = getattr(route, "dependant", None)
-        if dependant is None:
+    for path, dependant in _effective_routes(app.routes):
+        if path in public or dependant is None:
             continue
         if not _depends_on(dependant, auth_dependency):
             unprotected.append(path)

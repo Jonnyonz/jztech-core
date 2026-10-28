@@ -72,3 +72,35 @@ def test_explicit_public_route_passes():
     # Las rutas de documentacion de FastAPI tambien son rutas sin sesion: se listan igual.
     public = ["/login", "/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
     assert_all_routes_protected(_app_with(setup), public_paths=public, auth_dependency=get_current_user)
+
+
+def test_included_router_routes_are_checked():
+    # FastAPI >= 0.141 no copia las rutas incluidas en app.routes: hay que entrar en ellas.
+    def setup(app):
+        router = APIRouter(prefix="/api")
+
+        @router.get("/abierta")
+        async def abierta():
+            return {}
+
+        app.include_router(router)
+
+    with pytest.raises(AssertionError, match="/api/abierta"):
+        assert_all_routes_protected(_app_with(setup), public_paths=[], auth_dependency=get_current_user)
+
+
+def test_include_router_dependency_and_prefix_count():
+    def setup(app):
+        router = APIRouter(prefix="/x")
+
+        @router.get("/a")
+        async def a():
+            return {}
+
+        app.include_router(router, prefix="/p", dependencies=[Depends(get_current_user)])
+
+    public = ["/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
+    assert_all_routes_protected(_app_with(setup), public_paths=public, auth_dependency=get_current_user)
+    # El path efectivo lleva los dos prefijos: marcarlo publico con otro nombre no lo tapa.
+    with pytest.raises(AssertionError, match="/p/x/a"):
+        assert_all_routes_protected(_app_with(setup), public_paths=public, auth_dependency=require_role(["admin"]))

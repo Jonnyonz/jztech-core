@@ -40,7 +40,7 @@ Se distribuye como *wheel* adjunto a cada release de GitHub, referenciado **con 
 `requirements.txt` de la app (nunca por URL de git sin hash):
 
 ```
-jztech-core @ https://github.com/Jonnyonz/jztech-core/releases/download/v0.1.6/jztech_core-0.1.6-py3-none-any.whl --hash=sha256:5696e801c2f1556c31109fdfa3b45b56827f26f275dfa3df32e0b28d3e33eeae
+jztech-core @ https://github.com/Jonnyonz/jztech-core/releases/download/v0.1.7/jztech_core-0.1.7-py3-none-any.whl --hash=sha256:d32e3668832d77523b7769695fffca1e41474b376144e9bbd714e9fe4f85133f
 ```
 
 El hash de cada versión está en el `SHA256SUMS.txt` adjunto a su release.

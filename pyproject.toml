@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "jztech-core"
-version = "0.1.7"
-description = "Libreria de seguridad e infraestructura compartida para las apps de JZTech: hash de claves (Argon2id), sesiones opacas, CSRF, cabeceras de seguridad, IP real, deny-by-default y migraciones SQL versionadas."
+version = "0.2.0"
+description = "Libreria de seguridad e infraestructura compartida para las apps de JZTech: hash de claves (Argon2id), sesiones opacas, CSRF, cabeceras de seguridad, IP real, deny-by-default, migraciones SQL versionadas y el sistema visual comun (suite.css)."
 readme = "README.md"
 license = "AGPL-3.0-or-later"
 requires-python = ">=3.11"

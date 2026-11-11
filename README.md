@@ -22,6 +22,7 @@ FastAPI/Starlette existentes módulo por módulo.
 
 | Módulo | Qué resuelve |
 |---|---|
+| `ui` | **Sistema visual común** (0.2.0): `suite.css` con los tokens claro/oscuro del handoff de diseño, alias del tema anterior, botones y badges, servido por la app en `/jz/suite.css` con caché inmutable por versión. Fuente única del diseño de Tracker360, JZPass y las demás apps. |
 | `passwords` | Hash de claves con **Argon2id** (parámetros por entorno) y migración transparente desde bcrypt o Argon2 de passlib. |
 | `sessions` | **Sesiones opacas en base**: token aleatorio en cookie `HttpOnly`+`Secure`+`SameSite=Strict`; en la base solo el hash SHA-256. Revocables. |
 | `csrf` | Token CSRF firmado con HMAC y **atado al usuario** de la sesión. |
@@ -173,6 +174,28 @@ configure_logging()                               # JSON a stdout
 install_generic_error_handler(app, "mi_app")      # 500 con {"msg": "Error interno..."}; el detalle, al log
 # field="detail" si el frontend lee el formato de FastAPI: {"detail": "..."}
 ```
+
+### Sistema visual (UI)
+
+```python
+from jztech_core.ui import montar_ui
+
+SUITE_CSS = montar_ui(app)      # agrega GET /jz/suite.css y devuelve "/jz/suite.css?v=0.2.0"
+```
+
+En cada HTML, antes del `<style>` propio (así la app puede pisar lo que necesite):
+
+```html
+<link rel="stylesheet" href="/jz/suite.css?v=0.2.0">
+```
+
+`suite.css` trae solo lo común a toda la suite: tokens de color claro y oscuro (`--bg`, `--sf`, `--ac`,
+`--ok`, `--dg`, `--wn`, `--ink`...), tipografías (`--f`, `--m`), los alias viejos (`--accent`,
+`--bg-page`...), reset mínimo, animaciones `jzin`/`jzlive`, `.btn` (`-p`, `-ok`, `-dg`, `-dg-o`, `-sm`,
+`-link`) y `.badge` (`b-ok|in|wn|dg|ne` y `badge-success|info|warning|danger|neutral`). El tema oscuro se
+activa con `data-theme="dark"` en `<html>`. Lo propio de cada pantalla (barra lateral, bandejas, tablas,
+modales) sigue en cada app. La ruta es pública: agregarla a `public_paths` del test de denegar por defecto.
+Las fuentes de Google no pasan el CSP del core; se usan si están instaladas y si no la del sistema.
 
 ### Configuración inicial
 

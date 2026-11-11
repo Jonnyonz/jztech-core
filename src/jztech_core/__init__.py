@@ -20,8 +20,9 @@ from jztech_core.deny_by_default import assert_all_routes_protected
 from jztech_core.migrations import apply_migrations
 from jztech_core.logging_setup import configure_logging, install_generic_error_handler
 from jztech_core.setup_flow import verify_setup_token
+from jztech_core.ui import montar_ui, suite_css
 
-__version__ = "0.1.7"
+__version__ = "0.2.0"
 
 __all__ = [
     "hash_password",
@@ -45,4 +46,6 @@ __all__ = [
     "configure_logging",
     "install_generic_error_handler",
     "verify_setup_token",
+    "montar_ui",
+    "suite_css",
 ]
